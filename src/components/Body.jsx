@@ -3,8 +3,9 @@ import { useEffect, useState } from "react";
 import ItrShimmer from "./Shimmer";
 
 const Body = () => {
-  const [restaurantListval, setrestaurantList] = useState([]);
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [restaurantListval, setrestaurantList] = useState(null); // null means loading
+  const [copyrestaurantListval,setcopyrestaurantListval] = useState([]);
+  const [inputVal, setInput] = useState("");
 
   const fetchData = async () => {
     try {
@@ -12,28 +13,18 @@ const Body = () => {
         "https://www.swiggy.com/dapi/restaurants/list/v5?lat=18.97210&lng=72.82460&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING"
       );
       const json = await response.json();
-      console.log("API Response:", json);
 
-      // Log each cards entry to find where restaurants are located
-      if (json?.data?.cards) {
-        json.data.cards.forEach((card, index) => {
-          if (card?.card?.card?.gridElements?.infoWithStyle?.restaurants) {
-            console.log(`Found restaurants at cards[${index}]`);
-          }
-        });
-      }
-
-      // Try to find restaurants data dynamically
+      // Find restaurants data dynamically and set state in one step
       const restaurantsData = json?.data?.cards.find(
-        (card) =>
-          card?.card?.card?.gridElements?.infoWithStyle?.restaurants
-      )?.card?.card?.gridElements?.infoWithStyle?.restaurants;
+        (card) => card?.card?.card?.gridElements?.infoWithStyle?.restaurants
+      )?.card?.card?.gridElements?.infoWithStyle?.restaurants || [];
+      console.log(restaurantsData)
 
-      setrestaurantList(restaurantsData || []);
-      setLoading(false);
+      setrestaurantList(restaurantsData);
+      setcopyrestaurantListval(restaurantsData);
     } catch (e) {
       console.error("Error fetching data:", e);
-      setLoading(false);
+      setrestaurantList([]); // Empty array on error
     }
   };
 
@@ -41,15 +32,26 @@ const Body = () => {
     fetchData();
   }, []);
 
-  // conditional rendering
-  if (loading) {
+  // Show shimmer while restaurantListval is null (still loading)
+  if (restaurantListval === null) {
     return <ItrShimmer />;
   }
 
-  // Return main content only after loading is complete
   return (
     <div className="body-container">
       <div className="filter-btn-container">
+        <div className="search">
+          <input
+            type="text"
+            onChange={(e) => setInput(e.target.value)}
+            value={inputVal}
+          />
+          <button
+          onClick={()=>{
+            const searchedArray = restaurantListval.filter((val)=>val.info.name.toLowerCase().includes(inputVal.toLowerCase()));
+            setcopyrestaurantListval(searchedArray);
+          }}>Search</button>
+        </div>
         <button
           className="filter-btn"
           onClick={() => {
@@ -62,10 +64,15 @@ const Body = () => {
           Top rated restaurant
         </button>
       </div>
+
       <div className="res-container">
-        {restaurantListval.map((item) => (
-          <ResCards key={item.info.id} info={item.info} />
-        ))}
+        {copyrestaurantListval.length > 0 ? (
+          copyrestaurantListval.map((item) => (
+            <ResCards key={item.info.id} info={item.info} />
+          ))
+        ) : (
+          <p>No restaurants found!</p>
+        )}
       </div>
     </div>
   );

@@ -5,11 +5,14 @@ const ResCards = ({ info }) => {
   const {
     name,
     avgRating,
-    deliveryTime,
+    sla,
     cloudinaryImageId,
     cuisines,
     costForTwo,
   } = info;
+  // const {deliveryTime} = sla;
+    const deliveryTime = sla?.deliveryTime || sla?.slaString || "30-40";
+
   return (
     <div className="res-card">
       <img
