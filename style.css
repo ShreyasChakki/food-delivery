@@ -1001,3 +1001,30 @@
   }
 }
 
+a, a:hover, a:focus, a:visited {
+  text-decoration: none;
+}
+
+.restaurant-link, 
+.card-link,
+.menu-item a,
+.feature a,
+.res-card a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Make sure all cards maintain consistent styling */
+.res-card, 
+.menu-item,
+.feature,
+.offer-card {
+  text-decoration: none;
+}
+
+/* Ensure the restaurant cards look clickable but don't have text decoration */
+.restaurant-link .res-card h3,
+.restaurant-link .res-card h4,
+.restaurant-link .res-card p {
+  text-decoration: none;
+}
