@@ -10,7 +10,7 @@ const Body = () => {
   const fetchData = async () => {
     try {
       const response = await fetch(
-        "https://www.swiggy.com/dapi/restaurants/list/v5?lat=18.97210&lng=72.82460&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING"
+        "https://www.swiggy.com/dapi/restaurants/list/v5?lat=17.38430&lng=78.45830&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING"
       );
       const json = await response.json();
 
@@ -58,10 +58,19 @@ const Body = () => {
             const filteredrestaurantList = restaurantListval.filter(
               (ele) => ele.info.avgRating > 4
             );
-            setrestaurantList(filteredrestaurantList);
+            setcopyrestaurantListval(filteredrestaurantList);
           }}
         >
           Top rated restaurant
+        </button>
+        <button
+          className="filter-btn"
+          onClick={() => {
+            // Reset to original list
+            setcopyrestaurantListval(restaurantListval);
+          }}
+        >
+          Show All
         </button>
       </div>
 
